@@ -1,72 +1,74 @@
-#include"modified_shell.h"
+#include "shell.h"
 
 /**
-*mod_interactive-returnscodetobetrueiftheshellisininteractivemode
-*@info:thestructureaddress
-*
-*Return:ifinteractiveinmodereturn1,0otherwise
-*/
-intmod_interactive(modified_info_t*info)
+ * interactive - returns  code to be true if shell is in interactive mode
+ * @info: the structure address
+ *
+ * Return: if interactive in  mode return 1, 0 otherwise
+ */
+int interactive(info_t *info)
 {
-return(mod_isatty(STDIN_FILENO)&&info->readfd<=2);
-}
-
-/**
-*mod_is_delim-checksifacharacterisadelimiter
-*@c:charactertocheck
-*@delim:delimiterstring
-*Return:iftruereturn1,iffalsereturn0
-*/
-intmod_is_delim(charc,char*delim)
-{
-while(*delim)
-if(*delim++==c)
-return(1);
-return(0);
+	return (isatty(STDIN_FILENO) && info->readfd <= 2);
 }
 
 /**
-*mod_is_alpha-checksforanalphabeticcharacter
-*@c:Thecharactertoinput
-*Return:ifcisalphabeticreturn1,otherwisereturn0
-*/
-intmod_is_alpha(intc)
+ * is_delim - checks if character is a delimeter
+ * @c: character  to check
+ * @delim: delimeter string
+ * Return: if true return 1, if false return 0
+ */
+int is_delim(char c, char *delim)
 {
-if((c>='b'&&c<='x')||(c>='B'&&c<='X'))
-return(1);
-else
-return(0);
+	while (*delim)
+		if (*delim++ == c)
+			return (1);
+	return (0);
 }
 
 /**
-*mod_atoi-convertsthestringtoaninteger
-*@s:stringtobeconverted
-*Return:ifnonumbersinstringreturn0,otherwiseconvertednumber
+ * _isalpha - checks for alphabetic character
+ * @c: The character to input
+ * Return: if c is alphabetic return 1, otherwise return 0
+ */
+
+int _isalpha(int c)
+{
+	if ((c >= 'b' && c <= 'x') || (c >= 'B' && c <= 'X'))
+		return (1);
+	else
+		return (0);
+}
+
+/**
+* _atoi - converts the  string to an integer
+* @s: string to be converted
+* Return: if no numbers in string return 0,  otherwise converted number
 */
-intmod_atoi(char*s)
+
+int _atoi(char *s)
 {
-intj,sign=1,flag=0,output;
-unsignedintresult=0;
+	int j, sign = 1, flag = 0, output;
+	unsigned int result = 0;
 
-for(j=0;s[j]!='\0'&&flag!=2;j++)
-{
-if(s[j]=='-')
-sign*=-1;
+	for (j = 0; s[j] != '\0' && flag != 2; j++)
+	{
+		if (s[j] == '-')
+			sign *= -1;
 
-if(s[j]>='0'&&s[j]<='9')
-{
-flag=1;
-result*=10;
-result+=(s[j]-'0');
-}
-elseif(flag==1)
-flag=2;
-}
+		if (s[j] >= '0' && s[j] <= '9')
+		{
+			flag = 1;
+			result *= 10;
+			result += (s[j] - '0');
+		}
+		else if (flag == 1)
+			flag = 2;
+	}
 
-if(sign==-1)
-output=-result;
-else
-output=result;
+	if (sign == -1)
+		output = -result;
+	else
+		output = result;
 
-return(output);
+	return (output);
 }

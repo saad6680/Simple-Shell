@@ -1,98 +1,85 @@
-#include"modified_shell.h"
+#include "shell.h"
 
 /**
-*mod_myexit-Exitstheshell.
-*@info:TheStructurecontainingarguments.Usedtomaintainfunctionprototype.
-*
-*Return:Returnsanexitstatus;(0)ifinfo->argv[0]!="exit".
-*/
-intmod_myexit(modified_info_t*info)
+ * _myenv -  this  prints the current environ
+ * @info: this struct containing potential arguments.to maintain constant function prototype.
+ * Return: Always 0
+ */
+int _myenv(info_t *info)
 {
-intexitcheck;
-
-if(info->argv[1])/*Ifthereisanexitargument*/
-{
-exitcheck=mod_erratoi(info->argv[1]);
-if(exitcheck==-1)
-{
-info->status=2;
-mod_print_error(info,"Illegalnumber:");
-mod_eputs(info->argv[1]);
-mod_eputchar('\n');
-return(1);
+	print_list_str(info->env);
+	return (0);
 }
-info->err_num=mod_erratoi(info->argv[1]);
-return(-2);
-}
-info->err_num=-1;
-return(-2);
-}
-
 /**
-*mod_mycd-Changesthecurrentdirectory.
-*@info:Thestructcontainingpotentialarguments.Usedforprototype.
-*
-*Return:Always0.
-*/
-intmod_mycd(modified_info_t*info)
+ * _mysetenv -  this Initialize a new environment variable,
+ *             or modify an existing one
+ * @info: this struct  containing potential arguments.
+ *  Return: Always 0
+ */
+int _mysetenv(info_t *info)
 {
-char*s,*dir,buffer[1024];
-intchdir_ret;
+	if (info->argc != 3)
+	{
+		_eputs("Incorrect number of arguements\n");
+		return (1);
+	}
+	if (_setenv(info, info->argv[1], info->argv[2]))
+		return (0);
+	return (1);
+}
+/**
+ * _getenv - gets the value of an environ variable
+ * @info:  this struct containing potential arguments.
+ * @name: env var name
+ *
+ * Return: the value
+ */
+char *_getenv(info_t *info, const char *name)
+{
+	list_t *node = info->env;
+	char *q;
 
-s=mod_getcwd(buffer,1024);
-if(!s)
-mod_puts("TODO:>>getcwdfailureemsghere<<\n");
-if(!info->argv[1])
-{
-dir=mod_getenv(info,"HOME=");
-if(!dir)
-chdir_ret=/*TODO:whatshouldthisbe?*/
-mod_chdir((dir=mod_getenv(info,"PWD="))?dir:"/");
-else
-chdir_ret=mod_chdir(dir);
+	while (node)
+	{
+		q = starts_with(node->str, name);
+		if (q && *q)
+			return (q);
+		node = node->next;
+	}
+	return (NULL);
 }
-elseif(mod_strcmp(info->argv[1],"-")==0)
+/**
+ * _myunsetenv -  this remove an environment variable
+ * @info: this struct containing potential arguments. Used  to maintain function prototype.
+ * Return: Always 0
+ */
+int _myunsetenv(info_t *info)
 {
-if(!mod_getenv(info,"OLDPWD="))
-{
-mod_puts(s);
-mod_putchar('\n');
-return(1);
-}
-mod_puts(mod_getenv(info,"OLDPWD=")),mod_putchar('\n');
-chdir_ret=/*TODO:whatshouldthisbe?*/
-mod_chdir((dir=mod_getenv(info,"OLDPWD="))?dir:"/");
-}
-else
-chdir_ret=mod_chdir(info->argv[1]);
-if(chdir_ret==-1)
-{
-mod_print_error(info,"can'tcdto");
-mod_eputs(info->argv[1]);
-mod_eputchar('\n');
-}
-else
-{
-mod_setenv(info,"OLDPWD",mod_getenv(info,"PWD="));
-mod_setenv(info,"PWD",mod_getcwd(buffer,1024));
-}
-return(0);
+	int i;
+
+	if (info->argc == 1)
+	{
+		_eputs("Too few arguements.\n");
+		return (1);
+	}
+	for (i = 1; i <= info->argc; i++)
+		_unsetenv(info, info->argv[i]);
+
+	return (0);
 }
 
 /**
-*mod_myhelp-Displayshelpinformation.
-*@info:Structurecontainingpotentialarguments.Usedtomaintain
-*constantfunctionprototype.
-*
-*Return:Always0.
-*/
-intmod_myhelp(modified_info_t*info)
+ * populate_env_list - populates env linked list
+ * @info: this structure containing potential arguments
+ * Return: Always 0
+ */
+int populate_env_list(info_t *info)
 {
-char**arg_array;
+	list_t *node = NULL;
+	size_t i;
 
-arg_array=info->argv;
-mod_puts("helpcallworks.Functionnotyetimplemented\n");
-if(0)
-mod_puts(*arg_array);/*tempatt_unusedworkaround*/
-return(0);
+	for (i = 0; environ[i]; i++)
+		add_node_end(&node, environ[i], 0);
+	info->env = node;
+	return (0);
 }

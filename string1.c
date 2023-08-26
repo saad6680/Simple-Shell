@@ -1,75 +1,84 @@
-#include"shell.h"
+#include "shell.h"
 
 /**
-*custom_strlen-returnsthelengthofastring
-*@s:thestringwhoselengthtocheck
-*
-*Return:integerlengthofstring
-*/
-intcustom_strlen(char*s)
+ * _strcpy - copies a string
+ * @dest: the destination
+ * @src: the source
+ *
+ * Return: pointer to destination
+ */
+char *_strcpy(char *dest, char *src)
 {
-inti=0;
+	int i = 0;
 
-if(!s)
-return(0);
-
-while(*s++)
-i++;
-return(i);
+	if (dest == src || src == 0)
+		return (dest);
+	while (src[i])
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	dest[i] = 0;
+	return (dest);
 }
-
 /**
-*custom_strcmp-performslexicographiccomparisonoftwostrings.
-*@s1:thefirststring
-*@s2:thesecondstring
-*
-*Return:negativeifs1<s2,positiveifs1>s2,zeroifs1==s2
-*/
-intcustom_strcmp(char*s1,char*s2)
+ * _puts - prints an input string
+ * @str: the string to be printed
+ *
+ * Return: Nothing
+ */
+void _puts(char *str)
 {
-while(*s1&&*s2)
-{
-if(*s1!=*s2)
-return(*s1-*s2);
-s1++;
-s2++;
-}
-if(*s1==*s2)
-return(0);
-else
-return(*s1<*s2?-1:1);
-}
+	int i = 0;
 
+	if (!str)
+		return;
+	while (str[i] != '\0')
+	{
+		_putchar(str[i]);
+		i++;
+	}
+}
 /**
-*custom_starts_with-checksifneedlestartswithhaystack
-*@haystack:stringtosearch
-*@needle:thesubstringtofind
-*
-*Return:addressofnextcharofhaystackorNULL
-*/
-char*custom_starts_with(constchar*haystack,constchar*needle)
+ * _strdup - duplicates a string
+ * @str: the string to duplicate
+ *
+ * Return: pointer to the duplicated string
+ */
+char *_strdup(const char *str)
 {
-while(*needle)
-if(*needle++!=*haystack++)
-return(NULL);
-return((char*)haystack);
+	int length = 0;
+	char *ret;
+
+	if (str == NULL)
+		return (NULL);
+	while (*str++)
+		length++;
+	ret = malloc(sizeof(char) * (length + 1));
+	if (!ret)
+		return (NULL);
+	for (length++; length--;)
+		ret[length] = *--str;
+	return (ret);
 }
-
 /**
-*custom_str_concat-concatenatestwostrings
-*@dest:thedestinationbuffer
-*@src:thesourcebuffer
-*
-*Return:pointertodestinationbuffer
-*/
-char*custom_str_concat(char*dest,char*src)
+ * _putchar - writes the character c to stdout
+ * @c: The character to print
+ *
+ * Return: On success 1.
+ * On error, -1 is returned, and errno is set appropriately.
+ */
+int _putchar(char c)
 {
-char*ret=dest;
+	static int i;
+	static char buf[WRITE_BUF_SIZE];
 
-while(*dest)
-dest++;
-while(*src)
-*dest++=*src++;
-*dest=*src;
-return(ret);
+	if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
+	{
+		write(1, buf, i);
+		i = 0;
+	}
+	if (c != BUF_FLUSH)
+		buf[i++] = c;
+	return (1);
 }
